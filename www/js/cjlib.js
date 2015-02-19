@@ -1,7 +1,6 @@
 /* 2001-05-25 (mca) : collection.js */
 /* Designing Hypermedia APIs by Mike Amundsen (2011) */
 /* Modified by Pedro Prieto */
-
 var cjs = function() {
 
   var g = {};
@@ -31,20 +30,27 @@ var cjs = function() {
     var ajax;
       var url = (href || g.collectionUrl);
 
-      console.log(url);
       dst = document.getElementById('write-template');
-
+      /*$.support.cors = true;
+      $.ajax({
+	  url: "https://php-mercuryteam.rhcloud.com/api/",
+	  crossDomain: true,
+      }).done(function(data) {
+	  //$( this ).addClass( "done" );
+	  console.log(data);
+	  dst.innerHTML = data;
+      });*/
 
       ajax = new XMLHttpRequest();
 
       if (ajax) {
 
-	  dst.innerHTML = ajax.open('get', url, false);
+	  ajax.open('get', url, false);
 	  ajax.send(null);
 	  if (ajax.status === 200) {
               g.data = JSON.parse(ajax.responseText);
+	  }
       }
-    }
   }
 
   function loadItem(href) {
@@ -227,16 +233,20 @@ var cjs = function() {
       form = templateForm(g.data.collection.href);
       fset = document.createElement('fieldset');
 
-      coll = g.data.collection.template.data;
-      for (i = 0, x = coll.length; i < x; i++) {
-        fset.appendChild(processInputElement(coll[i]));
-      }
+	if (g.data.collection.template != null) {
 
-      fset.appendChild(templateButtons());
-      form.appendChild(fset);
+	    
+	    coll = g.data.collection.template.data;
+	    for (i = 0, x = coll.length; i < x; i++) {
+		fset.appendChild(processInputElement(coll[i]));
+	    }
 
-      dst.appendChild(templateLink());
-      dst.appendChild(form);
+	    fset.appendChild(templateButtons());
+	    form.appendChild(fset);
+
+	    dst.appendChild(templateLink());
+	    dst.appendChild(form);
+	}
     }
   }
 
@@ -497,6 +507,12 @@ window.onload = function() {
 
   c = cjs();
   // Ruta de entrada a la API
-  c.g.collectionUrl = "http://php-mercuryteam.rhcloud.com/api";
-  c.init();
+  c.g.collectionUrl = "http://php-mercuryteam.rhcloud.com/api/";
+    c.init();
+
+    // Mobile
+    $("#links").navbar();
+        $("#collection dl").listview();
+//    $("a").addClass("ui-btn");
 };
+
